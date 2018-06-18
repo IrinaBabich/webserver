@@ -7,8 +7,8 @@ import java.net.Socket;
 public class Server {
     private String webAppPath;
     private int port;
-    private String unknownResource = "HTTP/1.1 404 not found\n";
-    private String returnPage = "Bad request";
+    private String unknownResource = "HTTP/1.1 404 Not found\n";
+    private String returnPage = "HTTP/1.1 400 Bad Request\n";
     private String OK = "HTTP/1.1 200 OK\n";
 
     public void start() throws IOException {
@@ -35,15 +35,21 @@ public class Server {
                 File file = new File(resourcePath);
                 if (!file.exists()) {
                     writer.write(unknownResource);
+                } else {
+                    writer.write(OK);
+
+                    try (BufferedReader fileReader = new BufferedReader(new FileReader(resourcePath))) {
+    while ((line = fileReader.readLine()) != null) {
+                            writer.write(line);
+                        }
+                        writer.newLine();
+                    }
                 }
-
-//                try (BufferedReader fileReader = new BufferedReader(new FileReader(resourcePath));
-
             }
 
             writer.write("HTTP/1.1 200 OK\n");
             writer.write("\n");
-//            writer.write(content);
+            writer.write(content);
             writer.flush();
         }
     }
