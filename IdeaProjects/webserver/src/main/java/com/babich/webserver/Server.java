@@ -8,12 +8,12 @@ public class Server {
     private String webAppPath;
     private int port;
     private String unknownResource = "HTTP/1.1 404 Not found\n";
-    private String returnPage = "HTTP/1.1 400 Bad Request\n";
+    private String badRequest = "HTTP/1.1 400 Bad Request\n";
     private String OK = "HTTP/1.1 200 OK\n";
 
     public void start() throws IOException {
         try (ServerSocket server = new ServerSocket(port);
-             // accept говорит серверу об ожидании клиента, ждем подключения
+             // когда клиент пытаеться присоединиться, метод аксепт возвращает сокет -> соединение с клиентом
              Socket socket = server.accept();
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -28,8 +28,7 @@ public class Server {
 
                 // GET /index.html HTTP/1.1
                 String uri = line.split(" ")[1]; // положили index.html
-
-                String resourcePath = webAppPath+uri;
+                String resourcePath = webAppPath + uri;
 
                 // если файла не существует, то на веб-страницу выдает ошибку
                 File file = new File(resourcePath);
@@ -39,7 +38,7 @@ public class Server {
                     writer.write(OK);
 
                     try (BufferedReader fileReader = new BufferedReader(new FileReader(resourcePath))) {
-    while ((line = fileReader.readLine()) != null) {
+                        while ((line = fileReader.readLine()) != null) {
                             writer.write(line);
                         }
                         writer.newLine();
@@ -48,8 +47,7 @@ public class Server {
             }
 
             writer.write("HTTP/1.1 200 OK\n");
-            writer.write("\n");
-            writer.write(content);
+            writer.newLine();
             writer.flush();
         }
     }
