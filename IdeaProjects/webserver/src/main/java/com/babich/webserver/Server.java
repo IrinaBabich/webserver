@@ -5,13 +5,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
+
     private String webAppPath;
     private int port;
-    private String unknownResource = "HTTP/1.1 404 Not found\n";
-    private String badRequest = "HTTP/1.1 400 Bad Request\n";
-    private String OK = "HTTP/1.1 200 OK\n";
 
-    public void start() throws IOException {
+//    private String unknownResource = "HTTP/1.1 404 Not found\n";
+//    private String badRequest = "HTTP/1.1 400 Bad Request\n";
+//    private String OK = "HTTP/1.1 200 OK\n";
+
+     public void start() throws IOException {
         try (ServerSocket server = new ServerSocket(port);
              // когда клиент пытаеться присоединиться, метод аксепт возвращает сокет -> соединение с клиентом
              Socket socket = server.accept();
